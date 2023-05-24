@@ -1,0 +1,66 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    cursor: pointer;
+    transition: color 150ms ease-out;
+  }
+  
+  .card:hover .card__title {
+    color: var(--purple-dark);
+  }
+
+  .card__text {
+    margin-top: 1rem;
+    font-weight: 500;
+    color: var(--purple-dark);
+    max-height: 60px;
+  }
+  
+  .card:hover .card__media :hover {
+    transition: 0.4s ease;
+    transform: scale(1.1);
+  }
+  
+  .card:hover .link:after {
+    height: 0.125rem;
+    width: 80%;
+    background-color: var(--purple-dark);
+  }
+  
+  .card__media {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: 0.4s ease all;
+    mask-image: linear-gradient(white, black);
+  }
+  
+  .card__media img {
+    display: inline-block;
+    height: auto;
+    max-width: 100%;
+    transition: 0.4s ease all;
+    width: 100%;
+  }
+  
+  .card__title,
+  .card__description {
+    margin-top: 0.2rem;
+    color: black;
+    display: flex;
+  }
+
+  .card__title {
+    font-size: var(--font-size--label--xxl);
+  }
+
+  .label {
+    text-transform: uppercase;
+    font-size: var(--font-size--label--md);
+  }
+  
+  .card__title {
+    -webkit-line-clamp: 6;
+  }
+  

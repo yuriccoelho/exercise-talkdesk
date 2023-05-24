@@ -1,95 +1,113 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client"
+
+import Row from '@/components/Row/Row';
+import Dropdown from '@/components/Dropdown/Dropdown';
+import Grid from '@/components/Grid/Grid';
+import Pagination from '@/components/Pagination/Pagination';
+import Card, { CardProps } from '@/components/Card/Card';
+import { useEffect, useState } from 'react';
+import { relative } from 'path';
 
 export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+  const myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');   
+  
+    const [currentPage, setCurrentPage] = useState(1);
+    const [cardList, setCardList] = useState([]);
+  
+    const loadCards = async () => {
+      
+      //Body of the fetch requisition
+      var raw = JSON.stringify({
+        category: [],
+        industry: "all-industries",
+        integration: 'all-integrations',
+        limit: 20,
+        order: 'ASC',
+        order_by: 'title',
+        page: currentPage,
+        post_type: ['customers'],
+        region: 'all-regions',
+        search: '',
+      });
+  
+      const requestOptions:RequestInit = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow',
+      };  
+      
+      try {
+        const response = await fetch(
+          'https://cms.talkdesk.com/wp-json/web-api/v1/content/cards',
+          requestOptions
+        );
+          
+        const result = await response.json();
+        
+        setCardList(result?.data?.list ?? []);
+  
+      } catch (error) {
+        console.log('error', error)
+      }
+    };
+  
+    useEffect(()=>{
+      loadCards().catch(console.error);
+    },[]);
+  
+    useEffect(()=>{
+      loadCards().catch(console.error);
+    },[currentPage]);
+  
+    const renderCardList = () => {
+      return cardList.map((card:CardProps) => <Card {...card} />);
+    };
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h2>
+          The most innovative companies use Talkdesk.
+        </h2>
+        <p>
+          See how companies around the world use Talkdesk to provide exceptional customer experiences.
+        </p>
+      </header>
+      
+      <div style={{ paddingBlock: '25px' }}></div>
+
+      <section>
+        <Row>
+          <Dropdown />
+          <Dropdown />
+          <Dropdown />
+        </Row>
+      </section>
+
+      <div style={{ paddingBlock: '15px' }}></div>
+
+      <section>
+        <Grid>
+          {renderCardList()}
+        </Grid>
+      </section>
+
+      <div style={{ paddingBlock: '25px' }}></div>
+
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <Pagination
+          className="pagination-bar"
+          currentPage={currentPage}
+          totalCount={100}
+          pageSize={16}
+          onPageChange={page => setCurrentPage(page)}
         />
       </div>
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+      <div style={{ paddingBlock: '25px' }}></div>
+    </div>
+  );
 }
